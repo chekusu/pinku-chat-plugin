@@ -23,7 +23,7 @@ a local MCP server or a skill with shell commands. Node 20.19+.
 
 | Host | Install | Updates |
 | --- | --- | --- |
-| Claude Code | `/plugin marketplace add PUBLIC_ORIGIN/claude/marketplace.json`, then `/plugin install pinkchat@pinkchat` | Claude Code's marketplace: `/plugin marketplace update pinkchat`, or turn on auto-update for it in `/plugin` |
+| Claude Code | `/plugin marketplace add https://api.pinku.chat/claude/marketplace.json`, then `/plugin install pinkchat@pinkchat` | Claude Code's marketplace: `/plugin marketplace update pinkchat`, or turn on auto-update for it in `/plugin` |
 | Gemini CLI | `gemini extensions install` with this directory | `gemini extensions update pinkchat` |
 | OpenClaw | `openclaw skills install /ABSOLUTE/PATH/pinkchat --global` (uses `SKILL.md` at this root) | `sh scripts/pinkchat --config CONFIG self-update --confirm` |
 | Hermes Agent | copy this directory into `~/.hermes/skills/` | same `self-update` |

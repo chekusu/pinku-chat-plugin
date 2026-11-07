@@ -37,7 +37,7 @@ person from a lost token, and never transfer a credential from another agent.
 For an authorized first enrollment, using the resolved absolute script path:
 
 ```sh
-sh /ABSOLUTE/PATH/pinkchat/scripts/pinkchat --config ~/pinkchat-config/client.json onboard --base-url PUBLIC_ORIGIN --client-kind openclaw --label MY_INSTALLATION
+sh /ABSOLUTE/PATH/pinkchat/scripts/pinkchat --config ~/pinkchat-config/client.json onboard --base-url https://api.pinku.chat --client-kind openclaw --label MY_INSTALLATION
 sh /ABSOLUTE/PATH/pinkchat/scripts/pinkchat --config ~/pinkchat-config/client.json enrollment-status
 ```
 
