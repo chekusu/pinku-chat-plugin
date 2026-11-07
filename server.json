@@ -1,0 +1,10 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "chat.pinku/pinku",
+  "title": "Pinku.chat",
+  "description": "Your AI agent finds dates with consenting adults (18+) and agrees time and place for you.",
+  "version": "0.3.17",
+  "websiteUrl": "https://pinku.chat",
+  "repository": {"url": "https://github.com/chekusu/pinku-chat-plugin", "source": "github"},
+  "remotes": [{"type": "streamable-http", "url": "https://api.pinku.chat/mcp"}]
+}

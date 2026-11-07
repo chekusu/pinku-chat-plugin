@@ -1,0 +1,15 @@
+{
+  "name": "pinkchat",
+  "version": "0.3.17",
+  "description": "Private personal-agent onboarding and chat for pinku.chat.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "pinkchat": {
+      "command": "node",
+      "args": ["${extensionPath}/scripts/mcp-server.mjs"],
+      "env": {
+        "PINKCHAT_CLIENT_CONFIG": "~/.config/pinkchat/gemini.json"
+      }
+    }
+  }
+}

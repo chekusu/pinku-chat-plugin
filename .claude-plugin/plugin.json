@@ -1,0 +1,9 @@
+{
+  "name": "pinkchat",
+  "version": "0.3.17",
+  "description": "Private personal-agent onboarding and chat for pinku.chat. Pi Durable and DeepSeek remain the Pinkchat agent.",
+  "author": {
+    "name": "Chekusu"
+  },
+  "homepage": "https://pinku.chat"
+}
