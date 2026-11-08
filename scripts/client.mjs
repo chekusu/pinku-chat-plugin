@@ -200,6 +200,41 @@ export function makeClient(config) {
       return request(profile, 'POST', '/client/v1/notifications', { email: input.enabled ? { enabled: true, address: requiredString(input.address, 'address') } : { enabled: false } }, options);
     },
     requests(profile, options) { return request(profile, 'GET', '/client/v1/requests', undefined, options); },
+    hotels(profile, input = {}, options) {
+      const query = new URLSearchParams();
+      for (const key of ['lat', 'lng', 'radiusKm']) if (input[key] !== undefined) {
+        if (typeof input[key] !== 'number' || !Number.isFinite(input[key])) throw new PinkchatClientError(`${key} must be a number`, 0, 'invalid_hotel_search');
+        query.set(key, String(input[key]));
+      }
+      if (typeof input.query === 'string' && input.query.trim()) query.set('query', input.query.trim().slice(0, 60));
+      if (!query.has('query') && !(query.has('lat') && query.has('lng'))) throw new PinkchatClientError('give lat and lng, or query', 0, 'invalid_hotel_search');
+      return request(profile, 'GET', `/client/v1/hotels?${query}`, undefined, options);
+    },
+    hotel(profile, hotelId, options) { return request(profile, 'GET', `/client/v1/hotels/${encodeURIComponent(requiredString(hotelId, 'hotelId'))}`, undefined, options); },
+    bookHotel(profile, input, options) {
+      if (!input || typeof input !== 'object') throw new PinkchatClientError('booking input is required', 0, 'invalid_booking');
+      if (!['rest', 'stay'].includes(input.plan)) throw new PinkchatClientError('plan must be rest or stay', 0, 'invalid_booking');
+      return request(profile, 'POST', '/client/v1/hotels/bookings', {
+        venueId: requiredString(input.venueId, 'hotelId'), venueName: requiredString(input.venueName, 'hotelName'), start: requiredString(input.start, 'start'), plan: input.plan,
+        ...(input.partySize !== undefined ? { partySize: input.partySize } : {}), nameForBooking: requiredString(input.nameForBooking, 'nameForBooking'),
+        ...(input.phoneForBooking ? { phoneForBooking: requiredString(input.phoneForBooking, 'phoneForBooking') } : {}),
+      }, options);
+    },
+    confirmHotel(profile, input, options) {
+      if (!input || !['approve', 'reject'].includes(input.decision)) throw new PinkchatClientError('decision must be approve or reject', 0, 'invalid_decision');
+      if (input.decision === 'approve' && input.explicitConfirmation !== true) throw new PinkchatClientError('explicitConfirmation must be true: the owner decides, never the agent', 400, 'explicit_confirmation_required');
+      return request(profile, 'POST', '/client/v1/hotels/confirm', {
+        confirmationId: requiredString(input.confirmationId, 'confirmationId'), decision: input.decision, personReply: requiredString(input.personReply, 'personReply'),
+        ...(input.explicitConfirmation === true ? { explicitConfirmation: true } : {}),
+      }, options);
+    },
+    hotelBookingResult(profile, tripId, input, options) {
+      if (!input || !['booked', 'failed', 'cancelled'].includes(input.status)) throw new PinkchatClientError('status must be booked, failed or cancelled', 0, 'invalid_status');
+      return request(profile, 'POST', `/client/v1/hotels/bookings/${encodeURIComponent(requiredString(tripId, 'tripId'))}/result`, {
+        status: input.status, ...(input.reference ? { reference: String(input.reference).slice(0, 80) } : {}), ...(input.note ? { note: String(input.note).slice(0, 300) } : {}),
+      }, options);
+    },
+    hotelTrips(profile, options) { return request(profile, 'GET', '/client/v1/hotels/trips', undefined, options); },
     friends(profile, options) { return request(profile, 'GET', '/client/v1/friends', undefined, options); },
     friendsAttestation(profile, input, options) { return request(profile, 'POST', '/client/v1/friends/attestation', { email: requiredString(input?.email, 'email'), ownerCredentialSha256: requiredString(input?.ownerCredentialSha256, 'ownerCredentialSha256') }, options); },
     friendsLink(profile, input, options) { return request(profile, 'PUT', '/client/v1/friends/link', { gateway: requiredString(input?.gateway, 'gateway'), botId: requiredString(input?.botId, 'botId'), keyFingerprint: typeof input?.keyFingerprint === 'string' ? input.keyFingerprint : '' }, options); },

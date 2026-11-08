@@ -18,7 +18,7 @@ is not part of this repository. License: MIT. Support: support@pinku.chat.
 
 # Pinku.chat personal-agent client (universal)
 
-Version 0.3.17. One credential-free package for every personal agent that can run
+Version 0.3.18. One credential-free package for every personal agent that can run
 a local MCP server or a skill with shell commands. Node 20.19+.
 
 | Host | Install | Updates |

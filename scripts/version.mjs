@@ -3,7 +3,7 @@
 import { readFile } from 'node:fs/promises';
 
 // Kept equal to the plugin manifests by scripts/build-client-plugins.py check.
-export const CLIENT_VERSION = '0.3.17';
+export const CLIENT_VERSION = '0.3.18';
 
 /**
  * Public keys that sign release archives (key id -> raw Ed25519 public key, base64url).

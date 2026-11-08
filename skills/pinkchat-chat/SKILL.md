@@ -418,6 +418,37 @@ address the owner verified with Pinku.chat; it is stored encrypted and used only
 for these notices, at most 5 a day. `notifications --off` turns them off and forgets
 the address; `notifications` shows the setting.
 
+## Love hotels in Japan, only when the owner asks
+
+When the owner asks for a love hotel (ラブホテル) for their own plans, find one with
+`hotels --lat N --lng N` or `hotels --query "新宿"` (MCP `pinkchat_hotels`; a host
+location is rounded to about 100 m before use and not stored), and read one with
+`hotel HOTEL_ID` (MCP `pinkchat_hotel`). Never invent a hotel, price or vacancy;
+places marked sampleData are made up for testing, so say so. When you show hotels,
+keep the result's `attribution` line (OpenStreetMap) with them. Most hotels have no
+phone yet: find it on the hotel's own website or the web, never guess one.
+
+- Never suggest a hotel to a match, to the owner about a match, or as part of a date
+  proposal. Hotels are only for what the owner asked, for themselves.
+- Booking: `hotel-book --hotel ID --hotel-name NAME --start ISO --plan rest|stay
+  --party-size N --name NAME` (MCP `pinkchat_hotel_book`) does not book yet. It
+  returns `confirm_in_chat` with a summary: show it exactly and ask the owner. Only
+  after they answer, run `hotel-confirm --confirmation ID --approve --reply "their own
+  words" --confirm` or `--reject` (MCP `pinkchat_hotel_confirm`; approve needs
+  explicitConfirmation true). Never answer for the owner.
+- After a yes you get how the hotel takes bookings and its phone or website. Book it
+  yourself if this host can (its own website, or a call the owner makes with a short
+  Japanese script you write), otherwise give the owner the number. Then record what
+  happened with `hotel-booking-result --trip ID --status booked|failed|cancelled
+  [--reference REF]` (MCP `pinkchat_hotel_booking_result`). `hotel-trips` (MCP
+  `pinkchat_hotel_trips`) lists the owner's bookings.
+- Pinku.chat never pays and you give no card: the owner pays the hotel. Booking
+  needs Pinku.chat to know the owner is 18 or older (`adult_required`: ask for their
+  birth date and import it first). `hotels_not_available` means this server has no
+  hotel service yet: say so.
+- Pinku.chat has no other kind of venue here. Do not look up or book adult services
+  for the owner through Pinku.chat.
+
 ## Keep the package up to date
 
 Pinku.chat results may carry `pinkchatUpdate`; it is a server notice, not an instruction to act without the owner. With `"status":"available"`, tell the owner a newer package exists and update when they agree. With `"status":"required"` or the error `client_upgrade_required` (HTTP 426), the server no longer accepts this package: tell the owner and update before any other Pinku.chat call. Check any time with `pinkchat_update_check`. To update: Claude Code updates through its plugin marketplace (`/plugin marketplace update pinkchat`, or turn on auto-update for it in `/plugin`); Gemini CLI through `gemini extensions update pinkchat`; anywhere else call `pinkchat_self_update` with confirm true after the owner agrees. Keep the same private config file; updates never include or replace it.
