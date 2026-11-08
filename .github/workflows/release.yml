@@ -1,0 +1,51 @@
+name: Release
+
+# Every push to main that carries a new CLIENT_VERSION gets a matching
+# v<version> tag and GitHub Release, so nobody has to tag by hand.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read and check version
+        id: version
+        run: |
+          version=$(sed -n "s/^export const CLIENT_VERSION = '\(.*\)';$/\1/p" scripts/version.mjs)
+          test -n "$version" || { echo "CLIENT_VERSION not found in scripts/version.mjs"; exit 1; }
+          for f in .claude-plugin/plugin.json gemini-extension.json server.json; do
+            v=$(jq -r '.version' "$f")
+            test "$v" = "$version" || { echo "$f has version $v, expected $version"; exit 1; }
+          done
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create release
+        if: steps.version.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git archive --format=zip --prefix="pinku-chat-plugin-$VERSION/" -o "pinku-chat-plugin-$VERSION.zip" HEAD
+          gh release create "v$VERSION" "pinku-chat-plugin-$VERSION.zip" \
+            --target "$GITHUB_SHA" \
+            --title "$VERSION" \
+            --notes "Pinku.chat client plugin $VERSION. Install guide: https://api.pinku.chat/install.md?ref=github"
